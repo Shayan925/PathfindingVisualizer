@@ -32,50 +32,97 @@ public class Grid {
     }
 
     // Accessor and mutator methods
+    /**
+     * Method to get grid
+     * @return the grid
+     */
     public Node[][] getGrid() {
         return grid;
     }
-
+    /**
+     * Method to set the grid
+     * @param grid - new grid being set as the grid
+     */
     public void setGrid(Node[][] grid) {
         this.grid = grid;
     }
 
+    /**
+     * Method to get the buttons
+     * @return - returns the buttons
+     */
     public JButton[][] getButtons() {
         return buttons;
     }
 
+    /**
+     * Method to set the buttons
+     * @param buttons - new buttons being set as buttons
+     */
     public void setButtons(JButton[][] buttons) {
         this.buttons = buttons;
     }
 
+    /**
+     * Method to get the column of the starting point
+     * @return - returns the column of the starting point
+     */
     public int getStartCol() {
         return startCol;
     }
 
+    /**
+     * Method to set the column of the starting point
+     * @param startCol - column of the starting point
+     */
     public void setStartCol(int startCol) {
         this.startCol = startCol;
     }
 
+    /**
+     * Method to get the row of the starting point
+     * @return - returns the row of the starting point
+     */
     public int getStartRow() {
         return startRow;
     }
 
+    /**
+     * Method to set the row of the starting point
+     * @param startRow - row of the starting point
+     */
     public void setStartRow(int startRow) {
         this.startRow = startRow;
     }
 
+    /**
+     * Method to get the column of the ending point
+     * @return - returns the column of the ending point
+     */
     public int getEndCol() {
         return endCol;
     }
 
+    /**
+     * Method to set the column of the ending point
+     * @param endCol - column of the ending point
+     */
     public void setEndCol(int endCol) {
         this.endCol = endCol;
     }
 
+    /**
+     * Method to get the row of the ending point
+     * @return - returns the row of the ending point
+     */
     public int getEndRow() {
         return endRow;
     }
-
+    
+    /**
+     * Method to set the row of the ending point
+     * @param endRow - row the ending point
+     */
     public void setEndRow(int endRow) {
         this.endRow = endRow;
     }
