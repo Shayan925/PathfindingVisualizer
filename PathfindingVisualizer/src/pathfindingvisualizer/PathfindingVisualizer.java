@@ -17,7 +17,6 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
 
         // Set some properties for the window
         setSize(920, 905);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // Instantiate new application grid
@@ -185,7 +184,11 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new PathfindingVisualizer().setVisible(true);
+                PathfindingVisualizer p = new PathfindingVisualizer();
+                p.setVisible(true);
+
+                // Display the welcome message
+                JOptionPane.showMessageDialog(p, "Welcome to the Pathfinding Visualizer application!");
             }
         });
     }
