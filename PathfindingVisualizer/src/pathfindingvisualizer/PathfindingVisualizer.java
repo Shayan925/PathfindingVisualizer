@@ -10,11 +10,12 @@ import javax.swing.*;
 
 public class PathfindingVisualizer extends javax.swing.JFrame {
 
+    private Credits otherWindow;
+    
     public PathfindingVisualizer() {
         initComponents();
 
         // Set some properties for the window
-        setTitle("Pathfinding Visualizer");
         setSize(920, 905);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -51,12 +52,20 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
         menuItemCredits = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Pathfinding Visualizer");
 
         FileMenu.setText("File");
 
+        menuItemLoad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/download.png"))); // NOI18N
         menuItemLoad.setText("Load Map");
+        menuItemLoad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemLoadActionPerformed(evt);
+            }
+        });
         FileMenu.add(menuItemLoad);
 
+        menuItemSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/floppy-disk.png"))); // NOI18N
         menuItemSave.setText("Save Map");
         FileMenu.add(menuItemSave);
 
@@ -68,9 +77,11 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
 
         EditMenu.setText("Edit");
 
+        menuItemSetStart.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/play-button.png"))); // NOI18N
         menuItemSetStart.setText("Set Starting Point");
         EditMenu.add(menuItemSetStart);
 
+        menuItemSetEnd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/finish-flag.png"))); // NOI18N
         menuItemSetEnd.setText("Set Ending Point");
         EditMenu.add(menuItemSetEnd);
 
@@ -103,10 +114,17 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
 
         MoreMenu.setText("More");
 
+        menuItemResources.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/education.png"))); // NOI18N
         menuItemResources.setText("Educational Resources");
         MoreMenu.add(menuItemResources);
 
+        menuItemCredits.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/stage.png"))); // NOI18N
         menuItemCredits.setText("Credits");
+        menuItemCredits.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemCreditsActionPerformed(evt);
+            }
+        });
         MoreMenu.add(menuItemCredits);
 
         MenuBar.add(MoreMenu);
@@ -121,11 +139,24 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 277, Short.MAX_VALUE)
+            .addGap(0, 278, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void menuItemLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemLoadActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuItemLoadActionPerformed
+
+    private void menuItemCreditsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCreditsActionPerformed
+        if (otherWindow == null) {
+            otherWindow = new Credits(this); 
+        }
+        
+        otherWindow.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_menuItemCreditsActionPerformed
 
     public static void main(String args[]) {
         /* Set the Windows look and feel */
