@@ -31,7 +31,7 @@ public class Search {
 
     /**
      * Method to get the shortest path
-     * @return - returns the shortest path
+     * @return - returns the shortest path avaiable
      */
     public Node[] getShortestPath() {
         return shortestPath;
