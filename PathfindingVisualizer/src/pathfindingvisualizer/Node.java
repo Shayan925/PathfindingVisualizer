@@ -1,31 +1,26 @@
 /*
-Names: Shayan, Pareesh, & Kabir
-Date: December 15th, 2022
-Description: a node class to represent each square.
+ * Names: Shayan, Pareesh, & Kabir
+ * Date: December 15th, 2022
+ * Description: a node class to represent each square on the grid.
  */
 
 package pathfindingvisualizer;
 
 import java.awt.Color;
+import javax.swing.JButton;
 
 public class Node {
     
     // Instance variables
-    private boolean obstacle;
     private Color color;
-    private boolean startingNode;
-    private boolean destinationNode;
     private int row;
     private int col;
     
     /**
-     * Primary constructor method that sets all default attribute values except for row and column number.
+     * Primary constructor method that sets the default color of the node to white
      */
     public Node() {
-        obstacle = false;
         color = Color.WHITE;
-        startingNode = false;
-        destinationNode = false;
     }
     
     /**
@@ -40,59 +35,44 @@ public class Node {
     }
 
     // Accessor and mutator methods
-    
-    public boolean isObstacle() {
-        return obstacle;
-    }
-
-    public void setObstacle(boolean obstacle) {
-        this.obstacle = obstacle;
-    }
 
     public Color getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public boolean setColor(Color color, JButton btn) {
+        
+        // Check if current node is starting or ending point
+        if(this.color == Color.GREEN || this.color == Color.RED){
+            
+            // Check if new color to be set is either green or red or black
+            if(color == Color.GREEN || color == Color.RED || color == Color.BLACK){
+                // Not a valid position for the wall or starting or ending point
+                return false;
+            }
+        }
+        // Otherwise set the node color
         this.color = color;
-    }
-
-    public boolean isStartingNode() {
-        return startingNode;
-    }
-
-    public void setStartingNode(boolean startingNode) {
-        this.startingNode = startingNode;
-    }
-
-    public boolean isDestinationNode() {
-        return destinationNode;
-    }
-
-    public void setDestinationNode(boolean destinationNode) {
-        this.destinationNode = destinationNode;
+        
+        // Change the button colour
+        btn.setBackground(this.color);
+        
+        return true;
     }
 
     public int getRow() {
         return row;
     }
 
-    public void setRow(int row) {
-        this.row = row;
-    }
-
     public int getCol() {
         return col;
-    }
-
-    public void setCol(int col) {
-        this.col = col;
     }
     
     // Instance methods
 
     @Override
     public String toString() {
-        return "Node{" + "obstacle=" + obstacle + ", color=" + color + ", startingNode=" + startingNode + ", destinationNode=" + destinationNode + ", row=" + row + ", col=" + col + '}';
+        return "Node{" + "color=" + color + ", row=" + row + ", col=" + col + '}';
     }
+    
 }
