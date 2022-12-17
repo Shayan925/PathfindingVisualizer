@@ -1,17 +1,28 @@
 /*
-Names: Shayan, Pareesh, & Kabir
-Date: December 15th, 2022
-Description: an application to visualize pathfinding algorithms.
+ * Names: Shayan, Pareesh, & Kabir
+ * Date: December 15th, 2022
+ * Description: an application to visualize pathfinding algorithms.
  */
 package pathfindingvisualizer;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import javax.swing.*;
 
-public class PathfindingVisualizer extends javax.swing.JFrame {
+public class PathfindingVisualizer extends javax.swing.JFrame implements MouseListener, MouseMotionListener {
 
-    private Credits otherWindow;
-    
+    // Constant global variables
+    final int BUTTON_WIDTH = 18;
+    final int BUTTON_HEIGHT = 16;
+
+    // Other global variables
+    Credits otherWindow;
+    Grid applicationGrid;
+    boolean selectingStart = false;
+    boolean selectingEnd = false;
+
     public PathfindingVisualizer() {
         initComponents();
 
@@ -20,10 +31,10 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
         setLayout(new BorderLayout());
 
         // Instantiate new application grid
-        Grid applicationGrid = new Grid();
+        applicationGrid = new Grid();
 
         // Add and display the grid and control panels to the frame
-        add(applicationGrid.displayGrid(), BorderLayout.CENTER);
+        add(applicationGrid.displayGrid(this), BorderLayout.CENTER);
         add(createControlPanel(), BorderLayout.SOUTH);
     }
 
@@ -66,6 +77,11 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
 
         menuItemSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/floppy-disk.png"))); // NOI18N
         menuItemSave.setText("Save Map");
+        menuItemSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemSaveActionPerformed(evt);
+            }
+        });
         FileMenu.add(menuItemSave);
 
         MenuBar.add(FileMenu);
@@ -78,10 +94,20 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
 
         menuItemSetStart.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/play-button.png"))); // NOI18N
         menuItemSetStart.setText("Set Starting Point");
+        menuItemSetStart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemSetStartActionPerformed(evt);
+            }
+        });
         EditMenu.add(menuItemSetStart);
 
         menuItemSetEnd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/finish-flag.png"))); // NOI18N
         menuItemSetEnd.setText("Set Ending Point");
+        menuItemSetEnd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemSetEndActionPerformed(evt);
+            }
+        });
         EditMenu.add(menuItemSetEnd);
 
         MenuBar.add(EditMenu);
@@ -115,6 +141,11 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
 
         menuItemResources.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/education.png"))); // NOI18N
         menuItemResources.setText("Educational Resources");
+        menuItemResources.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemResourcesActionPerformed(evt);
+            }
+        });
         MoreMenu.add(menuItemResources);
 
         menuItemCredits.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/stage.png"))); // NOI18N
@@ -144,18 +175,85 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Method to be executed when the user selects the load map option in the
+     * menu
+     *
+     * @param evt
+     */
     private void menuItemLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemLoadActionPerformed
-        // TODO add your handling code here:
+        // Call the grid's load grid method
+        applicationGrid.loadGrid();
     }//GEN-LAST:event_menuItemLoadActionPerformed
 
+    /**
+     * Method to be executed when the user selects the credits option in the
+     * menu
+     *
+     * @param evt
+     */
     private void menuItemCreditsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCreditsActionPerformed
+        // Check if the other window is not open
         if (otherWindow == null) {
-            otherWindow = new Credits(this); 
+            // Instantiate new credit window
+            otherWindow = new Credits(this);
         }
-        
+
+        // Set the new window to be visible and the origianl window to be hidden
         otherWindow.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_menuItemCreditsActionPerformed
+
+    /**
+     * Method to be executed when the user selects the save map option in the
+     * menu
+     *
+     * @param evt
+     */
+    private void menuItemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSaveActionPerformed
+        // Call the grid's save grid method
+        applicationGrid.saveGrid();
+    }//GEN-LAST:event_menuItemSaveActionPerformed
+
+    /**
+     * Method to be executed when the user selects the set starting point option
+     * in the menu
+     *
+     * @param evt
+     */
+    private void menuItemSetStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSetStartActionPerformed
+        // Display instructions to place starting node
+        JOptionPane.showMessageDialog(this, "Select any square to place the starting point.");
+
+        // Set the selecting start variable to true and the other one to false
+        selectingStart = true;
+        selectingEnd = false;
+    }//GEN-LAST:event_menuItemSetStartActionPerformed
+
+    /**
+     * Method to be executed when the user selects the set ending point option
+     * in the menu
+     *
+     * @param evt
+     */
+    private void menuItemSetEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSetEndActionPerformed
+        // Display instructions to place ending node
+        JOptionPane.showMessageDialog(this, "Select any square to place the ending point.");
+
+        // Set the selecting end variable to true and the other one to false
+        selectingEnd = true;
+        selectingStart = false;
+    }//GEN-LAST:event_menuItemSetEndActionPerformed
+
+    /**
+     * Method to be executed when the user selects the educational resources
+     * option in the menu
+     *
+     * @param evt
+     */
+    private void menuItemResourcesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemResourcesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuItemResourcesActionPerformed
 
     public static void main(String args[]) {
         /* Set the Windows look and feel */
@@ -188,13 +286,18 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
                 p.setVisible(true);
 
                 // Display the welcome message
-                JOptionPane.showMessageDialog(p, "Welcome to the Pathfinding Visualizer application!");
+                JOptionPane.showMessageDialog(p, "To begin click the 'Edit' menu and set the starting and ending points.\n"
+                        + "Next, left click on the mouse to place obstacles and right click to remove them.\n"
+                        + "Once you are satisfied with the layout of the grid select the desired\n"
+                        + "sorting algorithm under 'Algorithm' and press the search button.",
+                        "Welcome to the Pathfinding Visualizer Application!", JOptionPane.INFORMATION_MESSAGE);
             }
         });
     }
-    
+
     /**
      * Method to create the panel at the bottom of the application.
+     *
      * @return - JPanel object representing the panel to be displayed
      */
     private JPanel createControlPanel() {
@@ -208,13 +311,13 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
         // Instantiate the time and nodes searched labels
         JLabel searchTime = new JLabel(" Time: ");
         JLabel nodesSearched = new JLabel("Nodes Searched: ");
-        
+
         // Set font of label and button text
         searchTime.setFont(new Font("Courier New", Font.BOLD, 20));
         nodesSearched.setFont(new Font("Courier New", Font.BOLD, 20));
         searchButton.setFont(new Font("Courier New", Font.PLAIN, 20));
         resetButton.setFont(new Font("Courier New", Font.PLAIN, 20));
-        
+
         // Add the buttons and labels to the panel
         controlPanel.add(searchTime);
         controlPanel.add(nodesSearched);
@@ -224,6 +327,70 @@ public class PathfindingVisualizer extends javax.swing.JFrame {
         return controlPanel;
     }
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // Get the button that was clicked
+        JButton button = (JButton) e.getSource();
+
+        // Calculate the row and column of the button that was clicked
+        int row = button.getY() / BUTTON_HEIGHT;
+        int col = button.getX() / BUTTON_WIDTH;
+
+        // Check if user is trying to place the starting node
+        if (selectingStart) {
+            // Check if the square is a valid starting point
+            if (applicationGrid.getGrid()[row][col].setColor(Color.GREEN, applicationGrid.getButtons()[row][col])) {
+                // Store the starting point coordinates
+                applicationGrid.setStartPoint(row, col);
+                
+                // User is no longer selecting the starting point
+                selectingStart = false;
+            }
+        } // Check if user is trying to place the destination node
+        else if (selectingEnd) {
+            // Check if the square is a valid ending point
+            if (applicationGrid.getGrid()[row][col].setColor(Color.RED, applicationGrid.getButtons()[row][col])) {
+                // Store the ending point coordinates
+                applicationGrid.setEndPoint(row, col);
+
+                // User is no longer selecting the ending point
+                selectingEnd = false;
+            }
+        }// Otherwise user is placing or removing an obstacle
+        else{
+            
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup AlgorithmButtonGroup;
