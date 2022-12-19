@@ -22,6 +22,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
     Grid applicationGrid;
     boolean selectingStart = false;
     boolean selectingEnd = false;
+    boolean dragging = false;
 
     public PathfindingVisualizer() {
         initComponents();
@@ -29,7 +30,8 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         // Set some properties for the window
         setSize(920, 905);
         setLayout(new BorderLayout());
-
+        setResizable(false);
+        
         // Instantiate new application grid
         applicationGrid = new Grid();
 
@@ -263,7 +265,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
+                if ("Metal".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -358,18 +360,18 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
             }
         }// Otherwise user is placing or removing an obstacle
         else{
-            
+            applicationGrid.getGrid()[row][col].setColor(Color.BLACK, applicationGrid.getButtons()[row][col]);
         }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        dragging = true;
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        dragging = false;
     }
 
     @Override
@@ -384,6 +386,18 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
 
     @Override
     public void mouseDragged(MouseEvent e) {
+
+        if (dragging) {
+            // Calculate the row and column of the button that was clicked
+        int row = e.getY() / BUTTON_HEIGHT;
+        int col = e.getX() / BUTTON_WIDTH;
+        
+        
+ 
+            applicationGrid.getGrid()[row][col].setColor(Color.BLACK, applicationGrid.getButtons()[row][col]);
+ 
+        }
+        
 
     }
 
