@@ -6,6 +6,8 @@
 package pathfindingvisualizer;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -257,6 +259,29 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         // TODO add your handling code here:
     }//GEN-LAST:event_menuItemResourcesActionPerformed
 
+    /**
+     * Method to be executed when the search button is clicked
+     */
+    private void searchButtonActionPerformed() {
+        // Check if A* is the selected check box
+        if (AlgorithmButtonGroup.getSelection() == cBoxAStar.getModel()) {
+            Search.aStarSearch(null);
+        }// Check if Dijsktra is the selected check box
+        else if (AlgorithmButtonGroup.getSelection() == cBoxDijkstra.getModel()) {
+            Search.dijkstraSearch(null);
+        } // Otherwise the breadth first search is the selected check box
+        else {
+            System.out.println(Search.breadthFirstSearch(applicationGrid));
+        }
+    }
+
+    /**
+     * Method to be executed when the reset button is clicked
+     */
+    private void resetButtonActionPerformed() {
+        
+    }
+
     public static void main(String args[]) {
         /* Set the Metal look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -309,6 +334,24 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         // Instantiate the search and reset buttons
         JButton searchButton = new JButton("Search");
         JButton resetButton = new JButton("Reset");
+
+        // Add an action listener for the search button to detect when it is clicked
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Call the method to handle the search button action
+                searchButtonActionPerformed();
+            }
+        });
+
+        // Add an action listener for reset button to detect when it is clicked
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Call the method to handle the reset button action
+                resetButtonActionPerformed();
+            }
+        });
 
         // Instantiate the time and nodes searched labels
         JLabel searchTime = new JLabel(" Time: ");
@@ -416,12 +459,11 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
             }
         }
     }
-    
+
     @Override
     public void mouseReleased(MouseEvent e) {
-
     }
-    
+
     @Override
     public void mouseMoved(MouseEvent e) {
     }
