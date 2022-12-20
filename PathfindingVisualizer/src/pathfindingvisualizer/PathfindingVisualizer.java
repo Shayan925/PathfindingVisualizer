@@ -1,7 +1,7 @@
 /*
  * Names: Shayan, Pareesh, & Kabir
  * Date: December 15th, 2022
- * Description: an application to visualize pathfinding algorithms.
+ * Description: the main graphics class to visualize pathfinding algorithms.
  */
 package pathfindingvisualizer;
 
@@ -22,7 +22,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
     Grid applicationGrid;
     boolean selectingStart = false;
     boolean selectingEnd = false;
-    boolean dragging = false;
+    boolean placeWalls = true;
 
     public PathfindingVisualizer() {
         initComponents();
@@ -31,7 +31,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         setSize(920, 905);
         setLayout(new BorderLayout());
         setResizable(false);
-        
+
         // Instantiate new application grid
         applicationGrid = new Grid();
 
@@ -258,7 +258,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
     }//GEN-LAST:event_menuItemResourcesActionPerformed
 
     public static void main(String args[]) {
-        /* Set the Windows look and feel */
+        /* Set the Metal look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
@@ -344,7 +344,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
             if (applicationGrid.getGrid()[row][col].setColor(Color.GREEN, applicationGrid.getButtons()[row][col])) {
                 // Store the starting point coordinates
                 applicationGrid.setStartPoint(row, col);
-                
+
                 // User is no longer selecting the starting point
                 selectingStart = false;
             }
@@ -358,52 +358,80 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
                 // User is no longer selecting the ending point
                 selectingEnd = false;
             }
-        }// Otherwise user is placing or removing an obstacle
-        else{
+        } // Check if user is placing a wall
+        else if (placeWalls) {
+            // Color the square black
             applicationGrid.getGrid()[row][col].setColor(Color.BLACK, applicationGrid.getButtons()[row][col]);
+        } // Check if user is removing a wall
+        else if (!placeWalls) {
+            // Check if we are trying to remove a starting or ending point
+            if (!((col == applicationGrid.getStartCol() && row == applicationGrid.getStartRow()) || (col == applicationGrid.getEndCol() && row == applicationGrid.getEndRow()))) {
+                // Remove the wall by coloring the square white because square is not a starting or ending point
+                applicationGrid.getGrid()[row][col].setColor(Color.WHITE, applicationGrid.getButtons()[row][col]);
+            }
         }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        dragging = true;
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        dragging = false;
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
+        // Check if left mouse button is pressed down
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            // User wants to place walls
+            placeWalls = true;
+        } // Check if right mouse button is pressed down
+        else if (e.getButton() == MouseEvent.BUTTON3) {
+            // User wants to remove walls
+            placeWalls = false;
+        }
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        int col, row;
 
-        if (dragging) {
-            // Calculate the row and column of the button that was clicked
-        int row = e.getY() / BUTTON_HEIGHT;
-        int col = e.getX() / BUTTON_WIDTH;
-        
-        
- 
+        // Get the position of the mouse
+        Point p1 = MouseInfo.getPointerInfo().getLocation();
+
+        // Get the position of the frame
+        Point p2 = this.getLocation();
+
+        // Calculate the mouse coordinates relative to frame and adjust the location by a few pixels
+        col = (int) p1.getX() - (int) p2.getX() - 10;
+        row = (int) p1.getY() - (int) p2.getY() - 54;
+
+        // Calculate the row and column of the button that the mouse is 
+        col /= BUTTON_WIDTH;
+        row /= BUTTON_HEIGHT;
+
+        // Check if the button is on the grid and the left mouse button is being held down
+        if (Search.isValid(col, row) && placeWalls) {
+            // Place a wall by coloring the square black
             applicationGrid.getGrid()[row][col].setColor(Color.BLACK, applicationGrid.getButtons()[row][col]);
- 
+        } // Check if the button is on the grid and the right mouse button is being held down
+        else if (Search.isValid(col, row) && !placeWalls) {
+            // Check if we are trying to remove a starting or ending point
+            if (!((col == applicationGrid.getStartCol() && row == applicationGrid.getStartRow()) || (col == applicationGrid.getEndCol() && row == applicationGrid.getEndRow()))) {
+                // Remove the wall by coloring the square white because square is not a starting or ending point
+                applicationGrid.getGrid()[row][col].setColor(Color.WHITE, applicationGrid.getButtons()[row][col]);
+            }
         }
-        
+    }
+    
+    @Override
+    public void mouseReleased(MouseEvent e) {
 
+    }
+    
+    @Override
+    public void mouseMoved(MouseEvent e) {
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
+    public void mouseEntered(MouseEvent e) {
+    }
 
+    @Override
+    public void mouseExited(MouseEvent e) {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

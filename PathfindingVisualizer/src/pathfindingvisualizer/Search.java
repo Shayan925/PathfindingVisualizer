@@ -52,7 +52,7 @@ public class Search {
      * @param j - an integer representing the column index
      * @return - whether the node is within the board's boundaries
      */
-    public boolean isValid(int i, int j) {
+    public static boolean isValid(int i, int j) {
         return (i >= 0 && i < 50) && (j >= 0 && j < 50);
     }
 
