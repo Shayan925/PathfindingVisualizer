@@ -123,7 +123,50 @@ public class Grid {
 
     // Instance methods
     public void saveGrid() {
-
+        
+        
+        //Returns the current grid
+        Node[][] gridSave = getGrid();
+        //Gets the coordinates of the starting point
+        int startcol = getStartCol();
+        int startrow = getStartRow();
+        //Gets the coordinates of the ending point;
+        int endcol = getEndCol();
+        int endrow =  getEndRow();
+        
+        String save = "";
+        
+        try{
+            // Using this process to invoke the constructor,
+        // JFileChooser points to user's default directory
+        JFileChooser j = new JFileChooser();
+ 
+        // Open the save dialog
+        j.showSaveDialog(null);
+        
+        File f = new File(j);
+        // create FileWriter object with file as parameter
+        FileWriter outputfile = new FileWriter(f);
+  
+        // create CSVWriter object filewriter object as parameter
+        CSVWriter writer = new CSVWriter(outputfile);
+        for(int i = 0; i < gridSave.length; i++){
+            for(int k = 0; k < gridSave.length; k++){
+                if(gridSave[i][k].getColor().equals("BLACK")){
+                   save += "wall";
+                }else if(gridSave[i][k].getColor().equals("RED")){
+                    save += "end";
+                }else if (gridSave[i][k].getColor().equals("GREEN")){
+                    save += "start";
+                }else{
+                    save += "nothing";
+                }
+            }
+        }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        
     }
 
     public void loadGrid() {
