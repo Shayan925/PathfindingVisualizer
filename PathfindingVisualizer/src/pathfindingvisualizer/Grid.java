@@ -7,10 +7,14 @@ package pathfindingvisualizer;
 
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.Arrays;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -33,10 +37,15 @@ public class Grid {
         // Instantiate the grid and buttons to size 50 x 50
         grid = new Node[NUM_ROWS][NUM_COLS];
         buttons = new JButton[NUM_ROWS][NUM_COLS];
+
+        // No starting or ending point
+        this.startCol = -1;
+        this.startRow = -1;
+        this.endCol = -1;
+        this.endRow = -1;
     }
 
     // Accessor and mutator methods
-    
     /**
      * Method to get grid
      *
@@ -80,8 +89,11 @@ public class Grid {
      * @param startCol - column of the ending point
      */
     public void setStartPoint(int startRow, int startCol) {
-        // Set the colour of the old starting point back to white
-        grid[this.startRow][this.startCol].setColor(Color.WHITE, buttons[this.startRow][this.startCol]);
+        // Check if there is already a starting point
+        if (this.startRow != -1 && this.startCol != -1) {
+            // Set the colour of the old starting point back to white
+            grid[this.startRow][this.startCol].setColor(Color.WHITE, buttons[this.startRow][this.startCol]);
+        }
 
         // Set the coordinate of the new starting point
         this.startRow = startRow;
@@ -113,8 +125,11 @@ public class Grid {
      * @param endCol - column of the ending point
      */
     public void setEndPoint(int endRow, int endCol) {
-        // Set the colour of the old ending point back to white
-        grid[this.endRow][this.endCol].setColor(Color.WHITE, buttons[this.endRow][this.endCol]);
+        // Check if there is already an ending point
+        if (this.endRow != -1 && this.endCol != -1) {
+            // Set the colour of the old ending point back to white
+            grid[this.endRow][this.endCol].setColor(Color.WHITE, buttons[this.endRow][this.endCol]);
+        }
 
         // Set the coordinates of the new ending point
         this.endRow = endRow;
@@ -123,50 +138,41 @@ public class Grid {
 
     // Instance methods
     public void saveGrid() {
-        
-        
-        //Returns the current grid
-        Node[][] gridSave = getGrid();
-        //Gets the coordinates of the starting point
-        int startcol = getStartCol();
-        int startrow = getStartRow();
-        //Gets the coordinates of the ending point;
-        int endcol = getEndCol();
-        int endrow =  getEndRow();
-        
+
         String save = "";
-        
-        try{
+
+        try {
             // Using this process to invoke the constructor,
-        // JFileChooser points to user's default directory
-        JFileChooser j = new JFileChooser();
- 
-        // Open the save dialog
-        j.showSaveDialog(null);
-        
-        File f = new File(j);
-        // create FileWriter object with file as parameter
-        FileWriter outputfile = new FileWriter(f);
-  
-        // create CSVWriter object filewriter object as parameter
-        CSVWriter writer = new CSVWriter(outputfile);
-        for(int i = 0; i < gridSave.length; i++){
-            for(int k = 0; k < gridSave.length; k++){
-                if(gridSave[i][k].getColor().equals("BLACK")){
-                   save += "wall";
-                }else if(gridSave[i][k].getColor().equals("RED")){
-                    save += "end";
-                }else if (gridSave[i][k].getColor().equals("GREEN")){
-                    save += "start";
-                }else{
-                    save += "nothing";
+            // JFileChooser points to user's default directory
+            JFileChooser j = new JFileChooser();
+
+            // Open the save dialog
+            j.showSaveDialog(null);
+
+            File f = new File(j);
+
+            // create FileWriter object with file as parameter
+            FileWriter outputfile = new FileWriter(f);
+
+            // create CSVWriter object filewriter object as parameter
+            CSVWriter writer = new CSVWriter(outputfile);
+            for (int i = 0; i < gridSave.length; i++) {
+                for (int k = 0; k < gridSave.length; k++) {
+                    if (gridSave[i][k].getColor().equals("BLACK")) {
+                        save += "wall";
+                    } else if (gridSave[i][k].getColor().equals("RED")) {
+                        save += "end";
+                    } else if (gridSave[i][k].getColor().equals("GREEN")) {
+                        save += "start";
+                    } else {
+                        save += "nothing";
+                    }
                 }
             }
-        }
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
     }
 
     public void loadGrid() {

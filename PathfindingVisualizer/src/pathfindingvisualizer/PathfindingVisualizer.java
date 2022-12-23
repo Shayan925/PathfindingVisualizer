@@ -7,7 +7,6 @@ package pathfindingvisualizer;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -20,8 +19,8 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
     final int BUTTON_HEIGHT = 16;
 
     // Other global variables
-    Credits otherWindow;
-    Grid applicationGrid;
+    Credits creditWindow;
+    Grid appGrid;
     boolean selectingStart = false;
     boolean selectingEnd = false;
     boolean placeWalls = true;
@@ -35,10 +34,10 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         setResizable(false);
 
         // Instantiate new application grid
-        applicationGrid = new Grid();
+        appGrid = new Grid();
 
         // Add and display the grid and control panels to the frame
-        add(applicationGrid.displayGrid(this), BorderLayout.CENTER);
+        add(appGrid.displayGrid(this), BorderLayout.CENTER);
         add(createControlPanel(), BorderLayout.SOUTH);
     }
 
@@ -187,7 +186,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
      */
     private void menuItemLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemLoadActionPerformed
         // Call the grid's load grid method
-        applicationGrid.loadGrid();
+        appGrid.loadGrid();
     }//GEN-LAST:event_menuItemLoadActionPerformed
 
     /**
@@ -198,13 +197,13 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
      */
     private void menuItemCreditsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCreditsActionPerformed
         // Check if the other window is not open
-        if (otherWindow == null) {
+        if (creditWindow == null) {
             // Instantiate new credit window
-            otherWindow = new Credits(this);
+            creditWindow = new Credits(this);
         }
 
         // Set the new window to be visible and the origianl window to be hidden
-        otherWindow.setVisible(true);
+        creditWindow.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_menuItemCreditsActionPerformed
 
@@ -216,7 +215,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
      */
     private void menuItemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSaveActionPerformed
         // Call the grid's save grid method
-        applicationGrid.saveGrid();
+        appGrid.saveGrid();
     }//GEN-LAST:event_menuItemSaveActionPerformed
 
     /**
@@ -263,15 +262,27 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
      * Method to be executed when the search button is clicked
      */
     private void searchButtonActionPerformed() {
+        int path;
+
         // Check if A* is the selected check box
         if (AlgorithmButtonGroup.getSelection() == cBoxAStar.getModel()) {
-            Search.aStarSearch(null);
+            path = Search.aStarSearch(null);
         }// Check if Dijsktra is the selected check box
         else if (AlgorithmButtonGroup.getSelection() == cBoxDijkstra.getModel()) {
-            Search.dijkstraSearch(null);
+            path = Search.dijkstraSearch(null);
         } // Otherwise the breadth first search is the selected check box
         else {
-            System.out.println(Search.breadthFirstSearch(applicationGrid));
+            path = Search.breadthFirstSearch(appGrid);
+        }
+
+        // Check if the path exists
+        if (path != -1) {
+            // Display the shortest path starting from the ending node
+            Search.displayShortestPath(appGrid.getGrid()[appGrid.getEndRow()][appGrid.getEndCol()], appGrid);
+        } // Otherwise path does not exist
+        else {
+            // Display message to the user to place starting or ending points or remove walls
+            JOptionPane.showMessageDialog(this, "A path could not be found. Either remove some obstacles or place both the starting and ending points");
         }
     }
 
@@ -279,7 +290,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
      * Method to be executed when the reset button is clicked
      */
     private void resetButtonActionPerformed() {
-        
+
     }
 
     public static void main(String args[]) {
@@ -336,21 +347,15 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         JButton resetButton = new JButton("Reset");
 
         // Add an action listener for the search button to detect when it is clicked
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Call the method to handle the search button action
-                searchButtonActionPerformed();
-            }
+        searchButton.addActionListener((ActionEvent e) -> {
+            // Call the method to handle the search button action
+            searchButtonActionPerformed();
         });
 
         // Add an action listener for reset button to detect when it is clicked
-        resetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Call the method to handle the reset button action
-                resetButtonActionPerformed();
-            }
+        resetButton.addActionListener((ActionEvent e) -> {
+            // Call the method to handle the reset button action
+            resetButtonActionPerformed();
         });
 
         // Instantiate the time and nodes searched labels
@@ -384,9 +389,9 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         // Check if user is trying to place the starting node
         if (selectingStart) {
             // Check if the square is a valid starting point
-            if (applicationGrid.getGrid()[row][col].setColor(Color.GREEN, applicationGrid.getButtons()[row][col])) {
+            if (appGrid.getGrid()[row][col].setColor(Color.GREEN, appGrid.getButtons()[row][col])) {
                 // Store the starting point coordinates
-                applicationGrid.setStartPoint(row, col);
+                appGrid.setStartPoint(row, col);
 
                 // User is no longer selecting the starting point
                 selectingStart = false;
@@ -394,9 +399,9 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         } // Check if user is trying to place the destination node
         else if (selectingEnd) {
             // Check if the square is a valid ending point
-            if (applicationGrid.getGrid()[row][col].setColor(Color.RED, applicationGrid.getButtons()[row][col])) {
+            if (appGrid.getGrid()[row][col].setColor(Color.RED, appGrid.getButtons()[row][col])) {
                 // Store the ending point coordinates
-                applicationGrid.setEndPoint(row, col);
+                appGrid.setEndPoint(row, col);
 
                 // User is no longer selecting the ending point
                 selectingEnd = false;
@@ -404,13 +409,13 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         } // Check if user is placing a wall
         else if (placeWalls) {
             // Color the square black
-            applicationGrid.getGrid()[row][col].setColor(Color.BLACK, applicationGrid.getButtons()[row][col]);
+            appGrid.getGrid()[row][col].setColor(Color.BLACK, appGrid.getButtons()[row][col]);
         } // Check if user is removing a wall
         else if (!placeWalls) {
             // Check if we are trying to remove a starting or ending point
-            if (!((col == applicationGrid.getStartCol() && row == applicationGrid.getStartRow()) || (col == applicationGrid.getEndCol() && row == applicationGrid.getEndRow()))) {
+            if (!((col == appGrid.getStartCol() && row == appGrid.getStartRow()) || (col == appGrid.getEndCol() && row == appGrid.getEndRow()))) {
                 // Remove the wall by coloring the square white because square is not a starting or ending point
-                applicationGrid.getGrid()[row][col].setColor(Color.WHITE, applicationGrid.getButtons()[row][col]);
+                appGrid.getGrid()[row][col].setColor(Color.WHITE, appGrid.getButtons()[row][col]);
             }
         }
     }
@@ -449,13 +454,13 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         // Check if the button is on the grid and the left mouse button is being held down
         if (Search.isValid(col, row) && placeWalls) {
             // Place a wall by coloring the square black
-            applicationGrid.getGrid()[row][col].setColor(Color.BLACK, applicationGrid.getButtons()[row][col]);
+            appGrid.getGrid()[row][col].setColor(Color.BLACK, appGrid.getButtons()[row][col]);
         } // Check if the button is on the grid and the right mouse button is being held down
         else if (Search.isValid(col, row) && !placeWalls) {
             // Check if we are trying to remove a starting or ending point
-            if (!((col == applicationGrid.getStartCol() && row == applicationGrid.getStartRow()) || (col == applicationGrid.getEndCol() && row == applicationGrid.getEndRow()))) {
+            if (!((col == appGrid.getStartCol() && row == appGrid.getStartRow()) || (col == appGrid.getEndCol() && row == appGrid.getEndRow()))) {
                 // Remove the wall by coloring the square white because square is not a starting or ending point
-                applicationGrid.getGrid()[row][col].setColor(Color.WHITE, applicationGrid.getButtons()[row][col]);
+                appGrid.getGrid()[row][col].setColor(Color.WHITE, appGrid.getButtons()[row][col]);
             }
         }
     }
