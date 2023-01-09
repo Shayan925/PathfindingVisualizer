@@ -10,7 +10,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import javax.swing.*;
+
 
 public class PathfindingVisualizer extends javax.swing.JFrame implements MouseListener, MouseMotionListener {
 
@@ -61,7 +65,8 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         cBoxBfs = new javax.swing.JCheckBoxMenuItem();
         spacing3 = new javax.swing.JMenu();
         MoreMenu = new javax.swing.JMenu();
-        menuItemResources = new javax.swing.JMenuItem();
+        menuEducation = new javax.swing.JMenu();
+        menuEduLink1 = new javax.swing.JMenuItem();
         menuItemCredits = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -142,14 +147,23 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
 
         MoreMenu.setText("More");
 
-        menuItemResources.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/education.png"))); // NOI18N
-        menuItemResources.setText("Educational Resources");
-        menuItemResources.addActionListener(new java.awt.event.ActionListener() {
+        menuEducation.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/education.png"))); // NOI18N
+        menuEducation.setText("Educational Resources");
+        menuEducation.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemResourcesActionPerformed(evt);
+                menuEducationActionPerformed(evt);
             }
         });
-        MoreMenu.add(menuItemResources);
+
+        menuEduLink1.setText("Stanford A*");
+        menuEduLink1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuEduLink1ActionPerformed(evt);
+            }
+        });
+        menuEducation.add(menuEduLink1);
+
+        MoreMenu.add(menuEducation);
 
         menuItemCredits.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/stage.png"))); // NOI18N
         menuItemCredits.setText("Credits");
@@ -248,15 +262,27 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         selectingStart = false;
     }//GEN-LAST:event_menuItemSetEndActionPerformed
 
-    /**
-     * Method to be executed when the user selects the educational resources
-     * option in the menu
-     *
-     * @param evt
-     */
-    private void menuItemResourcesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemResourcesActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_menuItemResourcesActionPerformed
+    private void menuEducationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEducationActionPerformed
+        
+        
+        
+    }//GEN-LAST:event_menuEducationActionPerformed
+
+    private void menuEduLink1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEduLink1ActionPerformed
+       
+        Desktop browser = Desktop.getDesktop();
+        try{
+            browser.browse(new URI("http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html"));
+        }
+        catch(IOException err){
+            
+        }
+        catch(URISyntaxException err){
+            
+        }
+        
+        
+    }//GEN-LAST:event_menuEduLink1ActionPerformed
 
     /**
      * Method to be executed when the search button is clicked
@@ -491,9 +517,10 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
     private javax.swing.JCheckBoxMenuItem cBoxAStar;
     private javax.swing.JCheckBoxMenuItem cBoxBfs;
     private javax.swing.JCheckBoxMenuItem cBoxDijkstra;
+    private javax.swing.JMenuItem menuEduLink1;
+    private javax.swing.JMenu menuEducation;
     private javax.swing.JMenuItem menuItemCredits;
     private javax.swing.JMenuItem menuItemLoad;
-    private javax.swing.JMenuItem menuItemResources;
     private javax.swing.JMenuItem menuItemSave;
     private javax.swing.JMenuItem menuItemSetEnd;
     private javax.swing.JMenuItem menuItemSetStart;
