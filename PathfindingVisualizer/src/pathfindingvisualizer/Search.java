@@ -8,79 +8,179 @@ package pathfindingvisualizer;
 import java.awt.Color;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
 public class Search {
 
+    // Class variables
+    private static final int[] ROW_OFFSET = {-1, 1, 0, 0};
+    private static final int[] COL_OFFSET = {0, 0, 1, -1};
+    private static final char[] DIRECTIONS = {'U', 'D', 'R', 'L'};
+
+    /**
+     * Method to perform and visualize the a star algorithm.
+     *
+     * @param g - the grid where the nodes are located
+     * @return - the number of nodes traversed during the search.
+     */
     public static int aStarSearch(Grid g) {
+        // Check if either starting or ending node does not exist
+        if (g.getStartRow() == -1 || g.getEndRow() == -1) {
+            // Cannot form a path
+            return -1;
+        }
+
+        // Variable declerations
+        Node start = g.getGrid()[g.getStartRow()][g.getStartCol()];
+        Node end = g.getGrid()[g.getEndRow()][g.getEndCol()];
+        Node current, neighbour;
+        boolean inQueue;
+
+        // Priority queue that assigns nodes with smaller f value the highest priority
+        PriorityQueue<Node> openSet = new PriorityQueue<>((node1, node2) -> {
+            return Double.compare(node1.getF(), node2.getF());
+        });
+
+        // Set of nodes that have already been evaluated
+        Set<Node> closedSet = new HashSet<>();
+
+        // Add the root node to the priority queue
+        openSet.add(start);
+
+        // Set the g value (distance from starting node to current node)
+        start.setG(0.0);
+
+        // Set the h value (distance from current node to ending node)
+        start.setH(hValue(start, end));
+
+        // Set the f value (sum of g and h value)
+        start.setF(start.getG() + start.getH());
+
+        // Loop until the priority queue is empty
+        while (!openSet.isEmpty()) {
+            // Remove the node with the lowest f value and store it in the closed set
+            current = openSet.poll();
+            closedSet.add(current);
+
+            // Loop 4 times through the direction vectors
+            for (int i = 0; i < 4; i++) {
+                // Check if the neighbouring node is valid
+                if (isValid(current.getRow() + ROW_OFFSET[i], current.getCol() + COL_OFFSET[i])) {
+                    // Store the neighbour node
+                    neighbour = g.getGrid()[current.getRow() + ROW_OFFSET[i]][current.getCol() + COL_OFFSET[i]];
+
+                    // Check if adjacent node has not already been visited and is not a wall
+                    if (!closedSet.contains(neighbour) && neighbour.getColor() != Color.BLACK) {
+                        // Check if the node is in the queue
+                        inQueue = openSet.contains(neighbour);
+
+                        // Check if node is not yet in the queue or there is a shorter path to the node
+                        if (!inQueue || current.getG() + 1 < neighbour.getG()) {
+                            // Set the parent node to the previous one to keep track of the shortest path
+                            neighbour.setParent(current);
+
+                            // Update the g value of neighbour node so it is 1 square away from the current
+                            neighbour.setG(current.getG() + 1);
+
+                            // Update the h value of neighbour
+                            neighbour.setH(hValue(neighbour, end));
+
+                            // Update the f value of neighbour node
+                            neighbour.setF(neighbour.getG() + neighbour.getH());
+
+                            // Check if there has been a direction change 
+                            if (current.getDirection() != DIRECTIONS[i]) {
+                                // Add a penalty for turning to make it more visually appealing
+                                neighbour.setF(neighbour.getF() + 0.0001);
+                            }
+
+                            // Update the direction
+                            neighbour.setDirection(DIRECTIONS[i]);
+
+                            // Check if node is already in queue
+                            if (inQueue) {
+                                // Remove the node from the queue in order to update its priority
+                                openSet.remove(neighbour);
+                            }
+
+                            // Add the node to the queue
+                            openSet.add(neighbour);
+
+                            // Check if the next node is the destination node
+                            if (neighbour.equals(end)) {
+                                // Search has been completed
+                                return closedSet.size();
+                            }
+
+                            // Click the button to visualize the searching path as the button colour changes to blue
+                            // Change the number will speed up or slow down how fast the visualization is
+                            g.getButtons()[neighbour.getRow()][neighbour.getCol()].doClick(5);
+                        }
+                    }
+                }
+            }
+        }
         return -1;
     }
-    
+
     /**
      * Method to perform and visualize the breadth-first search algorithm.
+     *
      * @param g - the grid where the nodes are located
      * @return - the number of nodes traversed during the search.
      */
     public static int breadthFirstSearch(Grid g) {
-        Node start = g.getGrid()[g.getStartRow()][g.getStartCol()];
-        Node end = g.getGrid()[g.getEndRow()][g.getEndCol()];
-        Node current, neighbour;
-        
         // Check if both starting and ending node exist
-        if(start.getRow() == -1 || end.getRow() == -1){
+        if (g.getStartRow() == -1 || g.getEndRow() == -1) {
             // Cannot form a path
             return -1;
         }
-        
+
+        Node start = g.getGrid()[g.getStartRow()][g.getStartCol()];
+        Node end = g.getGrid()[g.getEndRow()][g.getEndCol()];
+        Node current, neighbour;
+
         // Queue to keep track of which node to process next
         Queue<Node> queue = new LinkedList<>();
-        
+
         // Set to keep track of which nodes have been visited
         Set<Node> visited = new HashSet<>();
-        
-        // Counter for number of nodes visited
-        int count = 0;
-        
+
         // Add the root node to the queue and set it to visited
         queue.add(start);
         visited.add(start);
 
         // Loop until the queue is empty
         while (!queue.isEmpty()) {
-            // Remove the node from the queue and store it in current
+            // Remove the next node to be processed from the queue and store it in current
             current = queue.poll();
-            
-            // Increase counter
-            count++;
 
-            // Loop through the surrounding rows
-            for (int i = -1; i < 2; i++) {
-                // Loop through the surrounding cols
-                for (int j = -1; j < 2; j++) {
-                    // Check if the neighbouring node is a valid
-                    if (isValid(current.getRow() + i, current.getCol() + j)) {
-                        // Store the neighbour node
-                        neighbour = g.getGrid()[current.getRow() + i][current.getCol() + j];
+            // Loop 4 times through the direction vectors
+            for (int i = 0; i < 4; i++) {
+                // Check if the neighbouring node is valid
+                if (isValid(current.getRow() + ROW_OFFSET[i], current.getCol() + COL_OFFSET[i])) {
+                    // Store the neighbour node
+                    neighbour = g.getGrid()[current.getRow() + ROW_OFFSET[i]][current.getCol() + COL_OFFSET[i]];
 
-                        // Check if adjacent node has not already been visited and is not a wall
-                        if (!visited.contains(neighbour) && (Math.abs(i-j) == 1) && neighbour.getColor() != Color.BLACK) {
-                            // Add the neighbour node to the queue and set it to visited
-                            queue.add(neighbour);
-                            visited.add(neighbour);
-                            
-                            // Click the button to visualize the searching path as the button colour changes to blue
-                            // Change the number will speed up or slow down how fast the visualization is
-                            g.getButtons()[neighbour.getRow()][neighbour.getCol()].doClick(5);
+                    // Check if adjacent node has not already been visited and is not a wall
+                    if (!visited.contains(neighbour) && neighbour.getColor() != Color.BLACK) {
+                        // Add the neighbour node to the queue and set it to visited
+                        queue.add(neighbour);
+                        visited.add(neighbour);
 
-                            // Set the parent node to the previous one to keep track of the shortest path
-                            neighbour.setParent(current);
+                        // Click the button to visualize the searching path as the button colour changes to blue
+                        // Change the number will speed up or slow down how fast the visualization is
+                        g.getButtons()[neighbour.getRow()][neighbour.getCol()].doClick(5);
 
-                            // Check if the next node is the destination node
-                            if (neighbour.equals(end)) {
-                                // Search has been completed
-                                return count;
-                            }
+                        // Set the parent node to the previous one to keep track of the shortest path
+                        neighbour.setParent(current);
+
+                        // Check if the next node is the destination node
+                        if (neighbour.equals(end)) {
+                            // Search has been completed
+                            return visited.size();
                         }
                     }
                 }
@@ -95,6 +195,19 @@ public class Search {
     }
 
     /**
+     * Method to calculate the estimated distance from current node to the end
+     * node.
+     *
+     * @param cur - the current node
+     * @param end - the destination node
+     * @return - double representing the heuristic value of the node
+     */
+    public static double hValue(Node cur, Node end) {
+        // Calculate using Manhattan distance heurisitic
+        return Math.abs(cur.getRow() - end.getRow()) + Math.abs(cur.getCol() - end.getCol());
+    }
+
+    /**
      * This method checks if a node is inside of the board
      *
      * @param i - an integer representing the row index
@@ -102,28 +215,26 @@ public class Search {
      * @return - whether the node is within the board's boundaries
      */
     public static boolean isValid(int i, int j) {
-        return (i >= 0 && i < 50) && (j >= 0 && j < 50);
+        return (i >= 0 && i < Grid.NUM_ROWS) && (j >= 0 && j < Grid.NUM_COLS);
     }
-    
+
     /**
      * Recursive method to display the shortest path from the start to end.
+     *
      * @param n - the current node in the path
      * @param g - the grid the nodes are located on
      */
-    public static void displayShortestPath(Node n, Grid g){
+    public static void displayShortestPath(Node n, Grid g) {
         // Base case
         // Check if parent node is the starting node
-        if(n.getParent().equals(g.getGrid()[g.getStartRow()][g.getStartCol()])){
+        if (n.getParent().equals(g.getGrid()[g.getStartRow()][g.getStartCol()])) {
             // Stop recursion because path has been finished
             return;
         }
         // Otherwise set the colour of the parent node to yellow
         n.getParent().setColor(Color.YELLOW, g.getButtons()[n.getParent().getRow()][n.getParent().getCol()]);
-        
+
         // Recursively call method using the parent node
         displayShortestPath(n.getParent(), g);
     }
-
-    // Accessor and mutator methods
-    // Instance methods
 }
