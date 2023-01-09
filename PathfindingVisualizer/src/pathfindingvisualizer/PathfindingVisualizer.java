@@ -292,10 +292,10 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
 
         // Check if A* is the selected check box
         if (AlgorithmButtonGroup.getSelection() == cBoxAStar.getModel()) {
-            path = Search.aStarSearch(null);
+            path = Search.aStarSearch(appGrid);
         }// Check if Dijsktra is the selected check box
         else if (AlgorithmButtonGroup.getSelection() == cBoxDijkstra.getModel()) {
-            path = Search.dijkstraSearch(null);
+            path = Search.dijkstraSearch(appGrid);
         } // Otherwise the breadth first search is the selected check box
         else {
             path = Search.breadthFirstSearch(appGrid);
