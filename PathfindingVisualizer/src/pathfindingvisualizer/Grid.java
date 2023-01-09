@@ -11,12 +11,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.util.Arrays;
+import java.util.Scanner;
+import java.util.stream.Stream;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileSystemView;
 
 public class Grid {
 
@@ -138,45 +143,78 @@ public class Grid {
 
     // Instance methods
     public void saveGrid() {
+        String fileName = JOptionPane.showInputDialog("Enter file name: ");
+        
+        try{
+          File csvFile = new File(fileName + ".csv");
+          
+          FileWriter fileWriter = new FileWriter(csvFile);
 
-        String save = "";
-
-        try {
-            // Using this process to invoke the constructor,
-            // JFileChooser points to user's default directory
-            JFileChooser j = new JFileChooser();
-
-            // Open the save dialog
-            j.showSaveDialog(null);
-
-            File f = new File(j);
-
-            // create FileWriter object with file as parameter
-            FileWriter outputfile = new FileWriter(f);
-
-            // create CSVWriter object filewriter object as parameter
-            CSVWriter writer = new CSVWriter(outputfile);
-            for (int i = 0; i < gridSave.length; i++) {
-                for (int k = 0; k < gridSave.length; k++) {
-                    if (gridSave[i][k].getColor().equals("BLACK")) {
-                        save += "wall";
-                    } else if (gridSave[i][k].getColor().equals("RED")) {
-                        save += "end";
-                    } else if (gridSave[i][k].getColor().equals("GREEN")) {
-                        save += "start";
-                    } else {
-                        save += "nothing";
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+          for(Node[] nodes: grid){
+              String data = "";
+              
+              for(int i = 0; i < nodes.length; i++){
+                  if(nodes[i].getColor().equals(Color.WHITE)){
+                      data += "none,";
+                  }else if(nodes[i].getColor().equals(Color.BLACK)){
+                      data += "wall,";
+                  }else if(nodes[i].getColor().equals(Color.GREEN)){
+                      data += "start,";
+                  }else if(nodes[i].getColor().equals(Color.RED)){
+                      data+= "end,";
+                  }
+              }
+              data += "\n";
+              fileWriter.write(data);
+          }
+          fileWriter.close();
+          
+        }catch(java.io.IOException e){
+            System.out.println("Error: " + e);
         }
 
     }
-
+    
     public void loadGrid() {
+        // Using this process to invoke the constructor,
+        // JFileChooser points to user's default directory
+        JFileChooser j = new JFileChooser("src");
 
+        // Open the save dialog
+        j.showSaveDialog(null);
+
+        try{
+            
+        File chosenFile = j.getSelectedFile();
+        
+        Scanner s = new Scanner(chosenFile);
+        
+        for(int k = 0; k < 50; k++){
+            String values[] = s.nextLine().split(",");
+            
+            for(int i = 0; i < values.length; i++){
+                if(values[i].equals("none")){
+                    grid[k][i] = new Node(k, i);
+                    grid[k][i].setColor(Color.WHITE, buttons[k][i]);
+                }else if(values[i].equals("wall")){
+                    grid[k][i] = new Node(k, i);
+                    grid[k][i].setColor(Color.BLACK, buttons[k][i]);
+                }else if(values[i].equals("start")){
+                    grid[k][i] = new Node(k, i);
+                    grid[k][i].setColor(Color.GREEN, buttons[k][i]);
+                    startCol = i;
+                    startRow = k;
+                }else if(values[i].equals("end")){
+                    grid[k][i] = new Node(k, i);
+                    grid[k][i].setColor(Color.RED, buttons[k][i]);
+                    endCol = i;
+                    endRow = k;
+                }
+            }
+        }
+        }catch(FileNotFoundException e){
+            System.out.println("Error: " + e);
+        }
     }
 
     /**
