@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 public class Search {
 
@@ -190,7 +191,71 @@ public class Search {
         return -1;
     }
 
-    public static int dijkstraSearch(Grid g) {
+    /**
+     * Method to perform and visualize the depth-first search algorithm. The
+     * path formed is not necessarily the shortest path as this algorithm needs
+     * to traverse every single node in order to find the path which is very
+     * inefficient.
+     *
+     * @param g - the grid where the nodes are located
+     * @return - the number of nodes traversed during the search.
+     */
+    public static int depthFirstSearch(Grid g) {
+        // Check if both starting and ending node exist
+        if (g.getStartRow() == -1 || g.getEndRow() == -1) {
+            // Cannot form a path
+            return -1;
+        }
+
+        Node start = g.getGrid()[g.getStartRow()][g.getStartCol()];
+        Node end = g.getGrid()[g.getEndRow()][g.getEndCol()];
+        Node current, neighbour;
+
+        // Stack to keep track of which node to process next
+        Stack<Node> stack = new Stack<Node>();
+
+        // Set to keep track of which nodes have been visited
+        Set<Node> visited = new HashSet<>();
+
+        // Add the root node to the stack and set it to visited
+        stack.push(start);
+        visited.add(start);
+
+        // Loop until the stack is empty
+        while (!stack.isEmpty()) {
+            // Remove the next node to be processed from the stack and store it in current
+            current = stack.pop();
+
+            // Loop 4 times through the direction vectors
+            for (int i = 0; i < 4; i++) {
+                // Check if the neighbouring node is valid
+                if (isValid(current.getRow() + ROW_OFFSET[i], current.getCol() + COL_OFFSET[i])) {
+                    // Store the neighbour node
+                    neighbour = g.getGrid()[current.getRow() + ROW_OFFSET[i]][current.getCol() + COL_OFFSET[i]];
+
+                    // Check if adjacent node has not already been visited and is not a wall
+                    if (!visited.contains(neighbour) && neighbour.getColor() != Color.BLACK) {
+                        // Add the neighbour node to the stack and set it to visited
+                        stack.push(neighbour);
+                        visited.add(neighbour);
+
+                        // Click the button to visualize the searching path as the button colour changes to blue
+                        // Change the number will speed up or slow down how fast the visualization is
+                        g.getButtons()[neighbour.getRow()][neighbour.getCol()].doClick(5);
+
+                        // Set the parent node to the previous one to keep track of the shortest path
+                        neighbour.setParent(current);
+
+                        // Check if the next node is the destination node
+                        if (neighbour.equals(end)) {
+                            // Search has been completed
+                            return visited.size();
+                        }
+                    }
+                }
+            }
+        }
+        // Otherwise there is no path that connects start and end points
         return -1;
     }
 
