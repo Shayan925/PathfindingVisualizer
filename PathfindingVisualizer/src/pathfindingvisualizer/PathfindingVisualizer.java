@@ -15,7 +15,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import javax.swing.*;
 
-
 public class PathfindingVisualizer extends javax.swing.JFrame implements MouseListener, MouseMotionListener {
 
     // Constant global variables
@@ -25,6 +24,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
     // Other global variables
     Credits creditWindow;
     Grid appGrid;
+    JLabel searchTime, nodesSearched;
     boolean selectingStart = false;
     boolean selectingEnd = false;
     boolean placeWalls = true;
@@ -151,11 +151,6 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
 
         menuEducation.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/education.png"))); // NOI18N
         menuEducation.setText("Educational Resources");
-        menuEducation.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuEducationActionPerformed(evt);
-            }
-        });
 
         menuEduLink1.setText("Stanford A*");
         menuEduLink1.addActionListener(new java.awt.event.ActionListener() {
@@ -280,51 +275,52 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         selectingStart = false;
     }//GEN-LAST:event_menuItemSetEndActionPerformed
 
-    private void menuEducationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEducationActionPerformed
-        
-        
-        
-    }//GEN-LAST:event_menuEducationActionPerformed
-
+    /**
+     * Method to be executed when the user selects "Stanford A*"
+     *
+     * @param evt
+     */
     private void menuEduLink1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEduLink1ActionPerformed
-       
+        // Instantiate new desktop object
         Desktop browser = Desktop.getDesktop();
-        try{
+        try {
+            // Try opening the link with the default browser
             browser.browse(new URI("http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html"));
+        } catch (IOException | URISyntaxException e) {
+            System.out.println("Error: " + e);
         }
-        catch(IOException err){
-            
-        }
-        catch(URISyntaxException err){
-            
-        }
-        
-        
     }//GEN-LAST:event_menuEduLink1ActionPerformed
 
+    /**
+     * Method to be executed when the user selects Baeldung Breadth First Search
+     *
+     * @param evt
+     */
     private void menuEduLink2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEduLink2ActionPerformed
+        // Instantiate new desktop object
         Desktop browser = Desktop.getDesktop();
-        try{
+        try {
+            // Try opening the link with the default browser
             browser.browse(new URI("https://www.baeldung.com/java-breadth-first-search"));
-        }
-        catch(IOException err){
-            
-        }
-        catch(URISyntaxException err){
-            
+        } catch (IOException | URISyntaxException err) {
+
         }
     }//GEN-LAST:event_menuEduLink2ActionPerformed
 
+    /**
+     * Method to be executed when the user selects Geeks for Geeks Depth first
+     * search
+     *
+     * @param evt
+     */
     private void menuEduLink3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEduLink3ActionPerformed
+        // Instantiate new desktop object
         Desktop browser = Desktop.getDesktop();
-        try{
+        try {
+            // Try opening the link with the default browser
             browser.browse(new URI("https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/"));
-        }
-        catch(IOException err){
-            
-        }
-        catch(URISyntaxException err){
-            
+        } catch (IOException | URISyntaxException err) {
+
         }
     }//GEN-LAST:event_menuEduLink3ActionPerformed
 
@@ -333,7 +329,11 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
      */
     private void searchButtonActionPerformed() {
         int path;
-
+        double startTime, endTime, duration;
+        
+        // Record the current time in milliseconds
+        startTime = System.currentTimeMillis();
+        
         // Check if A* is the selected check box
         if (AlgorithmButtonGroup.getSelection() == cBoxAStar.getModel()) {
             path = Search.aStarSearch(appGrid);
@@ -344,11 +344,24 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         else {
             path = Search.breadthFirstSearch(appGrid);
         }
-
+        
+        // Record the time after the search is performed
+        endTime = System.currentTimeMillis();
+        
         // Check if the path exists
         if (path != -1) {
             // Display the shortest path starting from the ending node
             Search.displayShortestPath(appGrid.getGrid()[appGrid.getEndRow()][appGrid.getEndCol()], appGrid);
+            
+            // Calculate the duration the search took
+            duration = (endTime - startTime);  
+            
+            // Display the time the search took
+            searchTime.setText(" Time: " + duration/1000.0 + " seconds   ");
+            
+            // Display the number of nodes searched
+            nodesSearched.setText("Nodes Searched: " + (path-1) + " ");
+            
         } // Otherwise path does not exist
         else {
             // Display message to the user to place starting or ending points or remove walls
@@ -364,7 +377,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         for (int i = 0; i < Grid.NUM_ROWS; i++) {
             for (int j = 0; j < Grid.NUM_COLS; j++) {
                 //Create a new node for each tile
-                appGrid.getGrid()[i][j] = new Node(i,j);
+                appGrid.getGrid()[i][j] = new Node(i, j);
                 //change the colour of the tile to white
                 appGrid.getGrid()[i][j].setColor(Color.WHITE, appGrid.getButtons()[i][j]);
                 //Get rid of start point
@@ -441,8 +454,8 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         });
 
         // Instantiate the time and nodes searched labels
-        JLabel searchTime = new JLabel(" Time: ");
-        JLabel nodesSearched = new JLabel("Nodes Searched: ");
+        searchTime = new JLabel(" Time:       ");
+        nodesSearched = new JLabel("Nodes Searched:      ");
 
         // Set font of label and button text
         searchTime.setFont(new Font("Courier New", Font.BOLD, 20));

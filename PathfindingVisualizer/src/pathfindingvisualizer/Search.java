@@ -16,8 +16,8 @@ import java.util.Stack;
 public class Search {
 
     // Class variables
-    private static final int[] ROW_OFFSET = {-1, 1, 0, 0};
-    private static final int[] COL_OFFSET = {0, 0, 1, -1};
+    private static final int[] COL_OFFSET = {-1, 1, 0, 0};
+    private static final int[] ROW_OFFSET = {0, 0, 1, -1};
     private static final char[] DIRECTIONS = {'U', 'D', 'R', 'L'};
 
     /**
