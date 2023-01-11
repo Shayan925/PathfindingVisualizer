@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Grid {
 
@@ -138,45 +139,53 @@ public class Grid {
     }
 
     // Instance methods
+    /**
+     * Method to save the grid layout as a comma separated value (CSV) file.
+     */
     public void saveGrid() {
         //Selects the path in which the file will be saved
-        JFileChooser chooser = new JFileChooser("src/pathfindingvisualizer");
-        //Displays save dialog for the user
-        chooser.showSaveDialog(null);
-        //Gets the file name of the file selected by user
-        String fileName = chooser.getSelectedFile().getName();
+        JFileChooser fileChooser = new JFileChooser("src/pathfindingvisualizer");
+        
+        // Filter so user can only choose .csv files
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("*.csv", "csv"));
+        fileChooser.setAcceptAllFileFilterUsed(true);
+        
+        // Displays save dialog for the user
+        fileChooser.showSaveDialog(null);
 
-        //Try the following code
+        // Try the following code
         try {
-            //Creates file with name chosen my user in the chosen diredtory
-            File csvFile = new File("src/pathfindingvisualizer/" + fileName + ".csv");
 
-            //Writes the file
-            FileWriter fileWriter = new FileWriter(csvFile);
+            // Writes to the file
+            FileWriter fileWriter;
+            fileWriter = new FileWriter(fileChooser.getSelectedFile() + ".csv");
 
-            //Runs for all the nodes in the grid
+            //Runs for each row in the grid
             for (Node[] nodes : grid) {
-                //Declares string variable
+                // Declares string variable to hold info
                 String data = "";
 
-                //Iterates through the grid
-                for (int i = 0; i < nodes.length; i++) {
-                    //If the node is white or yellow save as none
-                    if (nodes[i].getColor().equals(Color.WHITE)) {
+                // Iterates through the grid
+                for (Node node : nodes) {
+                    // If the node is white or yellow save as none
+                    if (node.getColor().equals(Color.WHITE)) {
                         data += "none,";
-                        //If node is black save as wall
-                    } else if (nodes[i].getColor().equals(Color.BLACK)) {
+                    } // If node is black save as wall
+                    else if (node.getColor().equals(Color.BLACK)) {
                         data += "wall,";
-                        //if node is green save as start
-                    } else if (nodes[i].getColor().equals(Color.GREEN)) {
+                    } // If node is green save as start
+                    else if (node.getColor().equals(Color.GREEN)) {
                         data += "start,";
-                        //If node is red save as end
-                    } else if (nodes[i].getColor().equals(Color.RED)) {
+                    } // If node is red save as end
+                    else if (node.getColor().equals(Color.RED)) {
                         data += "end,";
                     }
                 }
-                //Add new line to the data string variable
+
+                // Add new line to the data string variable
                 data += "\n";
+
                 //Writes the data variable to the selected file
                 fileWriter.write(data);
             }
@@ -184,53 +193,68 @@ public class Grid {
             fileWriter.close();
 
         } catch (java.io.IOException e) {
+            // Print the error message
             System.out.println("Error: " + e);
         }
 
     }
 
+    /**
+     * Method to load the CSV file.
+     */
     public void loadGrid() {
         // Using this process to invoke the constructor,
-        // JFileChooser points to user's default directory
-        JFileChooser j = new JFileChooser("src/pathfindingvisualizer");
+        // JFileChooser points to project directory
+        JFileChooser fileChooser = new JFileChooser("src/pathfindingvisualizer");
+        
+        // Filter so user can only choose .csv files
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("*.csv", "csv"));
+        fileChooser.setAcceptAllFileFilterUsed(true);
 
-        // Open the save dialog
-        j.showOpenDialog(null);
+        // Open the save dialog  
+        fileChooser.showOpenDialog(null);
 
-        //Try the following code
+        // Try the following code
         try {
 
-            //Retrives the file selected by user
-            File chosenFile = j.getSelectedFile();
+            // Retrives the file selected by user
+            File chosenFile = fileChooser.getSelectedFile();
 
-            //Scanner scans the file selected by user
+            // Scanner scans the file selected by user
             Scanner s = new Scanner(chosenFile);
 
-            //Iterates through the file
-            for (int k = 0; k < 50; k++) {
-                //Gets ride of the commas between each word
+            // Loops through each row
+            for (int k = 0; k < NUM_ROWS; k++) {
+                // Seperates the words using the comma and stores them in the array
                 String values[] = s.nextLine().split(",");
 
-                //Iterates through the data
-                for (int i = 0; i < values.length; i++) {
-                    //If the word is none then add a white node at the spot
+                // Loops through each column
+                for (int i = 0; i < NUM_COLS; i++) {
+                    // Check if the word is none 
                     if (values[i].equals("none")) {
+                        // Replace original node with a new white node
                         grid[k][i] = new Node(k, i);
                         grid[k][i].setColor(Color.WHITE, buttons[k][i]);
-                        //If the word is wall then add a black node at that spot
-                    } else if (values[i].equals("wall")) {
+                    } // Check if the word is wall
+                    else if (values[i].equals("wall")) {
+                        // Replace original node with a new black node
                         grid[k][i] = new Node(k, i);
                         grid[k][i].setColor(Color.BLACK, buttons[k][i]);
-                        //If the word is start then add a green node at the spot
-                    } else if (values[i].equals("start")) {
+                    } // Check if the word is start
+                    else if (values[i].equals("start")) {
+                        // Replace original node with a new green node
                         grid[k][i] = new Node(k, i);
                         grid[k][i].setColor(Color.GREEN, buttons[k][i]);
+
                         //Set the startcol to the i value
                         startCol = i;
                         //Set the startrow to the k value
                         startRow = k;
-                        //If the word is end then add a red node at that spot
-                    } else if (values[i].equals("end")) {
+
+                    } // Check if the word is end 
+                    else if (values[i].equals("end")) {
+                        // Replace original node with a new red node
                         grid[k][i] = new Node(k, i);
                         grid[k][i].setColor(Color.RED, buttons[k][i]);
                         //Set the endcol to the i value
@@ -288,7 +312,7 @@ public class Grid {
      */
     @Override
     public String toString() {
-        return "Grid{" + "grid=" + Arrays.deepToString(grid) + ", buttons=" + Arrays.deepToString(buttons) + ", startCol=" + startCol + ", startRow=" + startRow + ", endCol=" + endCol + ", endRow=" + endRow + '}';
+        return "Grid{" + "grid=" + Arrays.deepToString(grid) + ", startCol=" + startCol + ", startRow=" + startRow + ", endCol=" + endCol + ", endRow=" + endRow + '}';
     }
 
 }

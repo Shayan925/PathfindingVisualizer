@@ -212,7 +212,7 @@ public class Search {
         Node current, neighbour;
 
         // Stack to keep track of which node to process next
-        Stack<Node> stack = new Stack<Node>();
+        Stack<Node> stack = new Stack<>();
 
         // Set to keep track of which nodes have been visited
         Set<Node> visited = new HashSet<>();
