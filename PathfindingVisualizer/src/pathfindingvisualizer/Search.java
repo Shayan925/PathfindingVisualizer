@@ -6,6 +6,7 @@
 package pathfindingvisualizer;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -39,11 +40,9 @@ public class Search {
         Node current, neighbour;
         boolean inQueue;
         int nodesSearched = 0;
-
-        // Priority queue that assigns nodes with smaller f value the highest priority
-        PriorityQueue<Node> openSet = new PriorityQueue<>((node1, node2) -> {
-            return Double.compare(node1.getF(), node2.getF());
-        });
+        
+        // Array list that stores the nodes in order from smallest f value to highest f value
+        ArrayList<Node> openSet = new ArrayList<>();
 
         // Set of nodes that have already been evaluated
         Set<Node> closedSet = new HashSet<>();
@@ -59,11 +58,12 @@ public class Search {
 
         // Set the f value (sum of g and h value)
         start.setF(start.getG() + start.getH());
-
+        
         // Loop until the priority queue is empty
         while (!openSet.isEmpty()) {
             // Remove the node with the lowest f value and store it in the closed set
-            current = openSet.poll();
+            current = openSet.get(0);
+            openSet.remove(0);
             closedSet.add(current);
 
             // Loop 4 times through the direction vectors
@@ -110,9 +110,9 @@ public class Search {
                             openSet.remove(neighbour);
                         }
 
-                        // Add the node to the queue
-                        openSet.add(neighbour);
-
+                        // Add the node into the sorted position in the Array list
+                        insertionSort(neighbour, openSet);
+                        
                         // One more node has been searched
                         nodesSearched++;
 
@@ -309,5 +309,20 @@ public class Search {
 
         // Recursively call method using the parent node
         displayShortestPath(n.getParent(), g);
+    }
+    
+    /**
+     * Method 
+     * @param n - the Node object to be inserted
+     * @param a - the ArrayList holding the nodes
+     */
+    public static void insertionSort(Node n, ArrayList<Node> a){
+        for (int i = 0; i < a.size(); i++) {
+            if(n.getF() < a.get(i).getF()){
+                a.add(i, n);
+                return;
+            }
+        }
+        a.add(n);
     }
 }
