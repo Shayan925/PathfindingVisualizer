@@ -78,7 +78,7 @@ public class Credits extends javax.swing.JFrame {
 
         jLabel8.setFont(new java.awt.Font("Dubai Light", 0, 14)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setText("This game was brought to you by ");
+        jLabel8.setText("This app was brought to you by ");
 
         jLabel9.setBackground(new java.awt.Color(255, 255, 255));
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
