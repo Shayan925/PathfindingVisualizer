@@ -16,8 +16,8 @@ import java.util.Stack;
 public class Search {
 
     // Class variables
-    private static final int[] COL_OFFSET = {-1, 1, 0, 0};
-    private static final int[] ROW_OFFSET = {0, 0, 1, -1};
+    private static final int[] ROW_OFFSET = {-1, 1, 0, 0};
+    private static final int[] COL_OFFSET = {0, 0, 1, -1};
     private static final char[] DIRECTIONS = {'U', 'D', 'R', 'L'};
 
     /**
@@ -38,6 +38,7 @@ public class Search {
         Node end = g.getGrid()[g.getEndRow()][g.getEndCol()];
         Node current, neighbour;
         boolean inQueue;
+        int nodesSearched = 0;
 
         // Priority queue that assigns nodes with smaller f value the highest priority
         PriorityQueue<Node> openSet = new PriorityQueue<>((node1, node2) -> {
@@ -73,56 +74,63 @@ public class Search {
                     neighbour = g.getGrid()[current.getRow() + ROW_OFFSET[i]][current.getCol() + COL_OFFSET[i]];
 
                     // Check if adjacent node has not already been visited and is not a wall
-                    if (!closedSet.contains(neighbour) && neighbour.getColor() != Color.BLACK) {
-                        // Check if the node is in the queue
-                        inQueue = openSet.contains(neighbour);
-
-                        // Check if node is not yet in the queue or there is a shorter path to the node
-                        if (!inQueue || current.getG() + 1 < neighbour.getG()) {
-                            // Set the parent node to the previous one to keep track of the shortest path
-                            neighbour.setParent(current);
-
-                            // Update the g value of neighbour node so it is 1 square away from the current
-                            neighbour.setG(current.getG() + 1);
-
-                            // Update the h value of neighbour
-                            neighbour.setH(hValue(neighbour, end));
-
-                            // Update the f value of neighbour node
-                            neighbour.setF(neighbour.getG() + neighbour.getH());
-
-                            // Check if there has been a direction change 
-                            if (current.getDirection() != DIRECTIONS[i]) {
-                                // Add a penalty for turning to make it more visually appealing
-                                neighbour.setF(neighbour.getF() + 0.0001);
-                            }
-
-                            // Update the direction
-                            neighbour.setDirection(DIRECTIONS[i]);
-
-                            // Check if node is already in queue
-                            if (inQueue) {
-                                // Remove the node from the queue in order to update its priority
-                                openSet.remove(neighbour);
-                            }
-
-                            // Add the node to the queue
-                            openSet.add(neighbour);
-
-                            // Check if the next node is the destination node
-                            if (neighbour.equals(end)) {
-                                // Search has been completed
-                                return closedSet.size();
-                            }
-
-                            // Click the button to visualize the searching path as the button colour changes to blue
-                            // Change the number will speed up or slow down how fast the visualization is
-                            g.getButtons()[neighbour.getRow()][neighbour.getCol()].doClick(5);
-                        }
+                    if (closedSet.contains(neighbour) || neighbour.getColor() == Color.BLACK) {
+                        continue;
                     }
+
+                    // Check if the node is in the queue
+                    inQueue = openSet.contains(neighbour);
+
+                    // Check if node is not yet in the queue or there is a shorter path to the node
+                    if (!inQueue || current.getG() + 1 < neighbour.getG()) {
+                        // Set the parent node to the previous one to keep track of the shortest path
+                        neighbour.setParent(current);
+
+                        // Update the g value of neighbour node so it is 1 square away from the current
+                        neighbour.setG(current.getG() + 1);
+
+                        // Update the h value of neighbour
+                        neighbour.setH(hValue(neighbour, end));
+
+                        // Update the f value of neighbour node
+                        neighbour.setF(neighbour.getG() + neighbour.getH());
+
+                        // Check if there has been a direction change 
+                        if (current.getDirection() != DIRECTIONS[i]) {
+                            // Add a penalty for turning to make it more visually appealing
+                            neighbour.setF(neighbour.getF() + 0.00001);
+                        }
+
+                        // Update the direction
+                        neighbour.setDirection(DIRECTIONS[i]);
+
+                        // Check if node is already in queue
+                        if (inQueue) {
+                            // Remove the node from the queue in order to update its priority
+                            openSet.remove(neighbour);
+                        }
+
+                        // Add the node to the queue
+                        openSet.add(neighbour);
+
+                        // One more node has been searched
+                        nodesSearched++;
+
+                        // Check if the next node is the destination node
+                        if (neighbour.equals(end)) {
+                            // Search has been completed
+                            return nodesSearched;
+                        }
+
+                        // Click the button to visualize the searching path as the button colour changes to blue
+                        // Change the number will speed up or slow down how fast the visualization is
+                        g.getButtons()[neighbour.getRow()][neighbour.getCol()].doClick(5);
+                    }
+
                 }
             }
         }
+
         return -1;
     }
 
@@ -181,7 +189,7 @@ public class Search {
                         // Check if the next node is the destination node
                         if (neighbour.equals(end)) {
                             // Search has been completed
-                            return visited.size();
+                            return visited.size() - 1;
                         }
                     }
                 }
@@ -249,7 +257,7 @@ public class Search {
                         // Check if the next node is the destination node
                         if (neighbour.equals(end)) {
                             // Search has been completed
-                            return visited.size();
+                            return visited.size() - 1;
                         }
                     }
                 }

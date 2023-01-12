@@ -24,7 +24,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
     // Other global variables
     Credits creditWindow;
     Grid appGrid;
-    JLabel searchTime, nodesSearched;
+    JLabel seconds, numNodes;
     boolean selectingStart = false;
     boolean selectingEnd = false;
     boolean placeWalls = true;
@@ -329,11 +329,11 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
      */
     private void searchButtonActionPerformed() {
         int path;
-        double startTime, endTime, duration;
-        
+        long startTime, endTime, duration;
+
         // Record the current time in milliseconds
         startTime = System.currentTimeMillis();
-        
+
         // Check if A* is the selected check box
         if (AlgorithmButtonGroup.getSelection() == cBoxAStar.getModel()) {
             path = Search.aStarSearch(appGrid);
@@ -344,28 +344,44 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         else {
             path = Search.breadthFirstSearch(appGrid);
         }
-        
+
         // Record the time after the search is performed
         endTime = System.currentTimeMillis();
-        
+
         // Check if the path exists
         if (path != -1) {
             // Display the shortest path starting from the ending node
             Search.displayShortestPath(appGrid.getGrid()[appGrid.getEndRow()][appGrid.getEndCol()], appGrid);
-            
+
             // Calculate the duration the search took
-            duration = (endTime - startTime);  
-            
+            duration = (endTime - startTime);
+
             // Display the time the search took
-            searchTime.setText(" Time: " + duration/1000.0 + " seconds   ");
-            
+            seconds.setText((double) duration / 1000.0 + " sec ");
+
             // Display the number of nodes searched
-            nodesSearched.setText("Nodes Searched: " + (path-1) + " ");
-            
+            numNodes.setText(path + " ");
+
         } // Otherwise path does not exist
         else {
             // Display message to the user to place starting or ending points or remove walls
             JOptionPane.showMessageDialog(this, "A path could not be found. Either remove some obstacles or place both the starting and ending points");
+        }
+    }
+    
+    /**
+     * Method to clear the search path.
+     */
+    private void clearPathButtonActionPerformed() {
+        //loop through double for loop for each tile in the colums and rows
+        for (int i = 0; i < Grid.NUM_ROWS; i++) {
+            for (int j = 0; j < Grid.NUM_COLS; j++) {
+                // Check if the node color is yellow
+                if (appGrid.getGrid()[i][j].getColor() == Color.YELLOW) {
+                    // Set it back to white
+                    appGrid.getGrid()[i][j].setColor(Color.WHITE, appGrid.getButtons()[i][j]);
+                }
+            }
         }
     }
 
@@ -437,14 +453,21 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         // Instantiate a new panel
         JPanel controlPanel = new JPanel();
 
-        // Instantiate the search and reset buttons
+        // Instantiate the search, clear path, and reset buttons
         JButton searchButton = new JButton("Search");
+        JButton clearPathButton = new JButton("Clear Path");
         JButton resetButton = new JButton("Reset");
 
         // Add an action listener for the search button to detect when it is clicked
         searchButton.addActionListener((ActionEvent e) -> {
             // Call the method to handle the search button action
             searchButtonActionPerformed();
+        });
+
+        // Add an action listener for the clear path button to detect when it is clicked
+        clearPathButton.addActionListener((ActionEvent e) -> {
+            // Call the method to handle the clear path button action
+            clearPathButtonActionPerformed();
         });
 
         // Add an action listener for reset button to detect when it is clicked
@@ -454,19 +477,27 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         });
 
         // Instantiate the time and nodes searched labels
-        searchTime = new JLabel(" Time:       ");
-        nodesSearched = new JLabel("Nodes Searched:      ");
+        JLabel searchTime = new JLabel(" Time: ");
+        JLabel nodesSearched = new JLabel("Nodes Searched: ");
+        seconds = new JLabel(" ");
+        numNodes = new JLabel(" ");
 
         // Set font of label and button text
         searchTime.setFont(new Font("Courier New", Font.BOLD, 20));
         nodesSearched.setFont(new Font("Courier New", Font.BOLD, 20));
+        seconds.setFont(new Font("Courier New", Font.PLAIN, 20));
+        numNodes.setFont(new Font("Courier New", Font.PLAIN, 20));
         searchButton.setFont(new Font("Courier New", Font.PLAIN, 20));
         resetButton.setFont(new Font("Courier New", Font.PLAIN, 20));
+        clearPathButton.setFont(new Font("Courier New", Font.PLAIN, 20));
 
         // Add the buttons and labels to the panel
         controlPanel.add(searchTime);
+        controlPanel.add(seconds);
         controlPanel.add(nodesSearched);
+        controlPanel.add(numNodes);
         controlPanel.add(searchButton);
+        controlPanel.add(clearPathButton);
         controlPanel.add(resetButton);
 
         return controlPanel;

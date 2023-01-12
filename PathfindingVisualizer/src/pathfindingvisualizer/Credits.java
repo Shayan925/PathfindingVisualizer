@@ -1,19 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Names: Shayan, Pareesh, & Kabir
+ * Date: December 17th, 2022
+ * Description: the credits window
  */
 package pathfindingvisualizer;
 
-/**
- *
- * @author PaMad1232
- */
 public class Credits extends javax.swing.JFrame {
 
     PathfindingVisualizer firstWindow;
+    
     /**
      * Creates new form Credits
+     * @param m
      */
     public Credits(PathfindingVisualizer m) {
         initComponents();
@@ -160,8 +158,13 @@ public class Credits extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    /**
+     * Method to be performed when the back button is pressed
+     * @param evt 
+     */
     private void butBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butBackActionPerformed
+        // Redisplay the main screen
         firstWindow.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_butBackActionPerformed

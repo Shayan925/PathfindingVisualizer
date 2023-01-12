@@ -90,12 +90,12 @@
                 <Property name="text" type="java.lang.String" value="A* Search"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cBoxDijkstra">
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cBoxDepth">
               <Properties>
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="AlgorithmButtonGroup"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Dijkstra Search"/>
+                <Property name="text" type="java.lang.String" value="Depth First Search"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cBoxBfs">
@@ -119,17 +119,40 @@
             <Property name="text" type="java.lang.String" value="More"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="menuItemResources">
+            <Menu class="javax.swing.JMenu" name="menuEducation">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/pathfindingvisualizer/Images/education.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Educational Resources"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemResourcesActionPerformed"/>
-              </Events>
-            </MenuItem>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="menuEduLink1">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Stanford A*"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuEduLink1ActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="menuEduLink2">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Baeldund Breath-First"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuEduLink2ActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="menuEduLink3">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Geeksfor Geeks Depth-First"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuEduLink3ActionPerformed"/>
+                  </Events>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
             <MenuItem class="javax.swing.JMenuItem" name="menuItemCredits">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
