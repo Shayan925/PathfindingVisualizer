@@ -229,8 +229,8 @@ public class Grid {
                 // Seperates the words using the comma and stores them in the array
                 String values[] = s.nextLine().split(",");
 
-                // Loops through each column
-                for (int i = 0; i < NUM_COLS; i++) {
+                // Loops through each value in the values array
+                for (int i = 0; i < values.length; i++) {
                     // Check if the word is none 
                     if (values[i].equals("none")) {
                         // Replace original node with a new white node
