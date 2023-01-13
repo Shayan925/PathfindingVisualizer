@@ -13,6 +13,7 @@ import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import javax.swing.*;
 
 public class PathfindingVisualizer extends javax.swing.JFrame implements MouseListener, MouseMotionListener {
@@ -36,6 +37,13 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         setSize(920, 905);
         setLayout(new BorderLayout());
         setResizable(false);
+
+        // Set path for icon
+        URL iconURL = getClass().getResource("/pathfindingvisualizer/Images/pathwayNEW.png");
+
+        // Create new image icon with file path and set the icon screen
+        ImageIcon icon = new ImageIcon(iconURL);
+        this.setIconImage(icon.getImage());
 
         // Instantiate new application grid
         appGrid = new Grid();
@@ -61,18 +69,21 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         spacing2 = new javax.swing.JMenu();
         AlgorithmMenu = new javax.swing.JMenu();
         cBoxAStar = new javax.swing.JCheckBoxMenuItem();
-        cBoxDepth = new javax.swing.JCheckBoxMenuItem();
         cBoxBfs = new javax.swing.JCheckBoxMenuItem();
+        cBoxDepth = new javax.swing.JCheckBoxMenuItem();
         spacing3 = new javax.swing.JMenu();
         MoreMenu = new javax.swing.JMenu();
         menuEducation = new javax.swing.JMenu();
         menuEduLink1 = new javax.swing.JMenuItem();
         menuEduLink2 = new javax.swing.JMenuItem();
         menuEduLink3 = new javax.swing.JMenuItem();
+        menuEduLink4 = new javax.swing.JMenuItem();
+        menuEduLink5 = new javax.swing.JMenuItem();
         menuItemCredits = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Pathfinding Visualizer");
+        setBackground(new java.awt.Color(255, 255, 255));
 
         FileMenu.setText("File");
 
@@ -133,13 +144,13 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         cBoxAStar.setText("A* Search");
         AlgorithmMenu.add(cBoxAStar);
 
-        AlgorithmButtonGroup.add(cBoxDepth);
-        cBoxDepth.setText("Depth First Search");
-        AlgorithmMenu.add(cBoxDepth);
-
         AlgorithmButtonGroup.add(cBoxBfs);
         cBoxBfs.setText("Breadth First Search");
         AlgorithmMenu.add(cBoxBfs);
+
+        AlgorithmButtonGroup.add(cBoxDepth);
+        cBoxDepth.setText("Depth First Search");
+        AlgorithmMenu.add(cBoxDepth);
 
         MenuBar.add(AlgorithmMenu);
 
@@ -176,6 +187,22 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         });
         menuEducation.add(menuEduLink3);
 
+        menuEduLink4.setText("Medium - Pathfinding");
+        menuEduLink4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuEduLink4ActionPerformed(evt);
+            }
+        });
+        menuEducation.add(menuEduLink4);
+
+        menuEduLink5.setText("neo4j - Pathfinding");
+        menuEduLink5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuEduLink5ActionPerformed(evt);
+            }
+        });
+        menuEducation.add(menuEduLink5);
+
         MoreMenu.add(menuEducation);
 
         menuItemCredits.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pathfindingvisualizer/Images/stage.png"))); // NOI18N
@@ -209,7 +236,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
      * Method to be executed when the user selects the load map option in the
      * menu
      *
-     * @param evt
+     * @param evt - event
      */
     private void menuItemLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemLoadActionPerformed
         // Call the grid's load grid method
@@ -220,7 +247,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
      * Method to be executed when the user selects the credits option in the
      * menu
      *
-     * @param evt
+     * @param evt - event
      */
     private void menuItemCreditsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCreditsActionPerformed
         // Check if the other window is not open
@@ -238,7 +265,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
      * Method to be executed when the user selects the save map option in the
      * menu
      *
-     * @param evt
+     * @param evt - event
      */
     private void menuItemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSaveActionPerformed
         // Call the grid's save grid method
@@ -249,7 +276,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
      * Method to be executed when the user selects the set starting point option
      * in the menu
      *
-     * @param evt
+     * @param evt - event
      */
     private void menuItemSetStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSetStartActionPerformed
         // Display instructions to place starting node
@@ -264,7 +291,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
      * Method to be executed when the user selects the set ending point option
      * in the menu
      *
-     * @param evt
+     * @param evt - event
      */
     private void menuItemSetEndActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSetEndActionPerformed
         // Display instructions to place ending node
@@ -278,7 +305,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
     /**
      * Method to be executed when the user selects "Stanford A*"
      *
-     * @param evt
+     * @param evt - event
      */
     private void menuEduLink1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEduLink1ActionPerformed
         // Instantiate new desktop object
@@ -286,6 +313,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         try {
             // Try opening the link with the default browser
             browser.browse(new URI("http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html"));
+            //catch errors
         } catch (IOException | URISyntaxException e) {
             System.out.println("Error: " + e);
         }
@@ -294,7 +322,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
     /**
      * Method to be executed when the user selects Baeldung Breadth First Search
      *
-     * @param evt
+     * @param evt - event
      */
     private void menuEduLink2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEduLink2ActionPerformed
         // Instantiate new desktop object
@@ -302,6 +330,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         try {
             // Try opening the link with the default browser
             browser.browse(new URI("https://www.baeldung.com/java-breadth-first-search"));
+            //catch errors
         } catch (IOException | URISyntaxException err) {
 
         }
@@ -311,7 +340,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
      * Method to be executed when the user selects Geeks for Geeks Depth first
      * search
      *
-     * @param evt
+     * @param evt - event
      */
     private void menuEduLink3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEduLink3ActionPerformed
         // Instantiate new desktop object
@@ -319,10 +348,45 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
         try {
             // Try opening the link with the default browser
             browser.browse(new URI("https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/"));
+            //catch errors
         } catch (IOException | URISyntaxException err) {
 
         }
     }//GEN-LAST:event_menuEduLink3ActionPerformed
+
+    /**
+     * Method to be executed when the user selects medium.com pathfinding
+     *
+     * @param evt - event
+     */
+    private void menuEduLink4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEduLink4ActionPerformed
+        // Instantiate new desktop object
+        Desktop browser = Desktop.getDesktop();
+        try {
+            // Try opening the link with the default browser
+            browser.browse(new URI("https://medium.com/@urna.hybesis/pathfinding-algorithms-the-four-pillars-1ebad85d4c6b"));
+            //catch errors
+        } catch (IOException | URISyntaxException err) {
+
+        }
+    }//GEN-LAST:event_menuEduLink4ActionPerformed
+
+    /**
+     * Method to be executed when the user selects neo4j.com pathfinding
+     *
+     * @param evt - event
+     */
+    private void menuEduLink5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEduLink5ActionPerformed
+        // Instantiate new desktop object
+        Desktop browser = Desktop.getDesktop();
+        try {
+            // Try opening the link with the default browser
+            browser.browse(new URI("https://neo4j.com/developer/graph-data-science/path-finding-graph-algorithms/"));
+            //catch errors
+        } catch (IOException | URISyntaxException err) {
+
+        }
+    }//GEN-LAST:event_menuEduLink5ActionPerformed
 
     /**
      * Method to be executed when the search button is clicked
@@ -368,7 +432,7 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
             JOptionPane.showMessageDialog(this, "A path could not be found. Either remove some obstacles or place both the starting and ending points");
         }
     }
-    
+
     /**
      * Method to clear the search path.
      */
@@ -620,6 +684,8 @@ public class PathfindingVisualizer extends javax.swing.JFrame implements MouseLi
     private javax.swing.JMenuItem menuEduLink1;
     private javax.swing.JMenuItem menuEduLink2;
     private javax.swing.JMenuItem menuEduLink3;
+    private javax.swing.JMenuItem menuEduLink4;
+    private javax.swing.JMenuItem menuEduLink5;
     private javax.swing.JMenu menuEducation;
     private javax.swing.JMenuItem menuItemCredits;
     private javax.swing.JMenuItem menuItemLoad;
