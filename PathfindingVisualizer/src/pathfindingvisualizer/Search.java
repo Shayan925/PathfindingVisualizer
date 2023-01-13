@@ -312,17 +312,21 @@ public class Search {
     }
     
     /**
-     * Method 
+     * Method inserts a node into a sorted array list.
      * @param n - the Node object to be inserted
      * @param a - the ArrayList holding the nodes
      */
     public static void insertionSort(Node n, ArrayList<Node> a){
+        // Loop through the entire array list from smallest to greatest
         for (int i = 0; i < a.size(); i++) {
+            // Check if the nodes f score is less than the next element
             if(n.getF() < a.get(i).getF()){
+                // Add the node into the proper position
                 a.add(i, n);
                 return;
             }
         }
+        // If there are no smaller f scores add it to the end of the array list
         a.add(n);
     }
 }
